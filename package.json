@@ -1,6 +1,10 @@
 {
   "name": "pcs",
   "private": true,
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "deploy:hh": "npx hardhat run scripts/deploy_pcs.js"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.5",
