@@ -1,4 +1,5 @@
-const { expect } = require("chai");
+const { solidity } = require("ethereum-waffle");
+const { expect } = require("chai").use(solidity);
 
 async function addLiquidity(
   liquidator,
@@ -95,7 +96,7 @@ describe("PancakeSwap", async () => {
     expect(wbnbInitialBalance - wbnbFinalBalance).to.equal(+ethers.utils.formatEther(amountIn));
     expect(usdtFinalBalance - usdtInitialBalance).to.equal(+ethers.utils.formatEther(amountsOut[1]));
   })
-  it("should exact wbnb tokens for exact usdt tokens", async () => {
+  it("should swap wbnb tokens for exact usdt tokens", async () => {
     const [,liquidator] = await ethers.getSigners();
 
     const path = [wbnb.address, usdt.address];
@@ -121,6 +122,36 @@ describe("PancakeSwap", async () => {
     const usdtFinalBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
 
     expect(wbnbInitialBalance - wbnbFinalBalance).to.equal(+ethers.utils.formatEther(amountInMax));
+    expect(usdtFinalBalance - usdtInitialBalance).to.equal(+ethers.utils.formatEther(amountOut));
+  })
+  it("should swap BNB for exact amount of tokens", async () => {
+    const [,liquidator] = await ethers.getSigners();
+
+    const path = [wbnb.address, usdt.address];
+    const amountOut = ethers.utils.parseEther("1");
+    const amountsIn = await pancakeRouter.getAmountsIn(amountOut, path);
+    const amountInMax = amountsIn[0];
+    await wbnb.connect(liquidator).deposit({ value: amountInMax });
+
+    const bnbInitialBalance = ethers.utils.formatEther(await liquidator.getBalance());
+    const usdtInitialBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
+
+    await wbnb.connect(liquidator).approve(pancakeRouter.address, amountInMax);
+
+    await pancakeRouter.connect(liquidator).swapETHForExactTokens(
+      amountOut,
+      path,
+      liquidator.address,
+      1661521170,
+      {
+        value: amountInMax
+      }
+    )
+  
+    const bnbFinalBalance = ethers.utils.formatEther(await liquidator.getBalance());
+    const usdtFinalBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
+
+    expect(bnbInitialBalance - bnbFinalBalance).to.be.closeTo(+ethers.utils.formatEther(amountInMax), 1e-3);
     expect(usdtFinalBalance - usdtInitialBalance).to.equal(+ethers.utils.formatEther(amountOut));
   })
 })
