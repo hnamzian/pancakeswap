@@ -124,6 +124,36 @@ describe("PancakeSwap", async () => {
     expect(wbnbInitialBalance - wbnbFinalBalance).to.equal(+ethers.utils.formatEther(amountInMax));
     expect(usdtFinalBalance - usdtInitialBalance).to.equal(+ethers.utils.formatEther(amountOut));
   })
+  it("should swap exact BNB tokens for usdt tokens", async () => {
+    const [,liquidator] = await ethers.getSigners();
+
+    const wbnbAmount = ethers.utils.parseEther("1");
+    await wbnb.connect(liquidator).deposit({ value: wbnbAmount });
+
+    const wbnbInitialBalance = ethers.utils.formatEther(await wbnb.balanceOf(liquidator.address));
+    const usdtInitialBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
+
+    const path = [wbnb.address, usdt.address];
+    const amountIn = wbnbAmount;
+    const amountsOut = await pancakeRouter.getAmountsOut(amountIn, path);
+    const amountOutMax = amountsOut[1];
+
+    await wbnb.connect(liquidator).approve(pancakeRouter.address, amountIn);
+
+    await pancakeRouter.connect(liquidator).swapExactTokensForTokens(
+      amountIn,
+      amountOutMax,
+      path,
+      liquidator.address,
+      1661521170
+    )
+  
+    const wbnbFinalBalance = ethers.utils.formatEther(await wbnb.balanceOf(liquidator.address));
+    const usdtFinalBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
+
+    expect(wbnbInitialBalance - wbnbFinalBalance).to.equal(+ethers.utils.formatEther(amountIn));
+    expect(usdtFinalBalance - usdtInitialBalance).to.equal(+ethers.utils.formatEther(amountsOut[1]));
+  })
   it("should swap BNB for exact amount of tokens", async () => {
     const [,liquidator] = await ethers.getSigners();
 
