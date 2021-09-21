@@ -48,7 +48,9 @@ beforeEach(async () => {
   // deploy PacnakeSwap
   const PancakeFactory = await ethers.getContractFactory("PancakeFactory");
   const pancakeFactory = await PancakeFactory.deploy(owner.address);
-
+  console.log(
+    "copy INIT_CODE_PAIR_HASH to PanckaeRouter(01).PancakeLibrary: feel free to comment this console after change", await pancakeFactory.INIT_CODE_PAIR_HASH()
+  );
   const PancakeRouter01 = await ethers.getContractFactory("PancakeRouter01");
   pancakeRouter = await PancakeRouter01.deploy(
     pancakeFactory.address, wbnb.address
