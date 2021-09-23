@@ -1,5 +1,5 @@
 /**
- *Submitted for verification at BscScan.com on 2020-09-09
+ *Submitted for verification at BscScan.com on 2020-09-04
 */
 
 pragma solidity 0.5.16;
@@ -9,7 +9,7 @@ import "./imported/Context.sol";
 import "./imported/Ownable.sol";
 import "./imported/SafeMath.sol";
 
-contract BEP20DOT is Context, IBEP20, Ownable {
+contract BEP20 is Context, IBEP20, Ownable {
   using SafeMath for uint256;
 
   mapping (address => uint256) private _balances;
@@ -21,11 +21,16 @@ contract BEP20DOT is Context, IBEP20, Ownable {
   string public _symbol;
   string public _name;
 
-  constructor() public {
-    _name = "Polkadot Token";
-    _symbol = "DOT";
-    _decimals = 18;
-    _totalSupply = 2250000 * 10**18;
+  constructor(
+    string memory name_,
+    string memory symbol_,
+    uint256 totalSupply_,
+    uint8 decimals_
+  ) public {
+    _name = name_;
+    _symbol = symbol_;
+    _decimals = decimals_;
+    _totalSupply = totalSupply_;
     _balances[msg.sender] = _totalSupply;
 
     emit Transfer(address(0), msg.sender, _totalSupply);

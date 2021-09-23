@@ -1,3 +1,4 @@
+const { parseUnits } = require("@ethersproject/units");
 const { solidity } = require("ethereum-waffle");
 const { expect } = require("chai").use(solidity);
 
@@ -41,8 +42,8 @@ beforeEach(async () => {
   });
 
 
-  const BEP20USDT = await ethers.getContractFactory("BEP20USDT");
-  usdt = await BEP20USDT.deploy();
+  const BEP20 = await ethers.getContractFactory("BEP20");
+  usdt = await BEP20.deploy("USDT Token", "USDT", parseUnits("3000000"), 18);
   await usdt.transfer(liquidator.address, INITIAL_USDT_LIQUIDITY);
 
   // deploy PacnakeSwap
