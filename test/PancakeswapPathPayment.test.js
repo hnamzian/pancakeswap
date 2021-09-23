@@ -101,14 +101,16 @@ describe("PancakeSwapPathPayment", async () => {
 
     // console.log(amountsOut.toString());
 
-    await pancakeRouter.connect(user).swapExactTokensForTokens(
+    const tnx = await pancakeRouter.connect(user).swapExactTokensForTokens(
       amountIn,
       amountOutMax,
       path,
       user.address,
       1661521170
-    )
-  
+    );
+    const transaction = await tnx.wait();
+    console.log("GAS USED: ", transaction.gasUsed.toString());
+
     const wbnbFinalBalance = formatUnits(await wbnb.balanceOf(user.address));
     const usdtFinalBalance = formatUnits(await usdt.balanceOf(user.address));
     const daiFinalBalance = formatUnits(await dai.balanceOf(user.address));

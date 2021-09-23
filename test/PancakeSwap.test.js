@@ -83,13 +83,15 @@ describe("PancakeSwap", async () => {
 
     await wbnb.connect(liquidator).approve(pancakeRouter.address, amountIn);
 
-    await pancakeRouter.connect(liquidator).swapExactTokensForTokens(
+    const tnx = await pancakeRouter.connect(liquidator).swapExactTokensForTokens(
       amountIn,
       amountOutMax,
       path,
       liquidator.address,
       1661521170
     )
+    const transaction = await tnx.wait();
+    console.log("GAS USED: ", transaction.gasUsed.toString());
   
     const wbnbFinalBalance = ethers.utils.formatEther(await wbnb.balanceOf(liquidator.address));
     const usdtFinalBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
@@ -111,13 +113,15 @@ describe("PancakeSwap", async () => {
 
     await wbnb.connect(liquidator).approve(pancakeRouter.address, amountInMax);
 
-    await pancakeRouter.connect(liquidator).swapTokensForExactTokens(
+    const tnx = await pancakeRouter.connect(liquidator).swapTokensForExactTokens(
       amountOut,
       amountInMax,
       path,
       liquidator.address,
       1661521170
-    )
+    );
+    const transaction = await tnx.wait();
+    console.log("GAS USED: ", transaction.gasUsed.toString());
   
     const wbnbFinalBalance = ethers.utils.formatEther(await wbnb.balanceOf(liquidator.address));
     const usdtFinalBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
@@ -141,14 +145,16 @@ describe("PancakeSwap", async () => {
 
     await wbnb.connect(liquidator).approve(pancakeRouter.address, amountIn);
 
-    await pancakeRouter.connect(liquidator).swapExactTokensForTokens(
+    const tnx = await pancakeRouter.connect(liquidator).swapExactTokensForTokens(
       amountIn,
       amountOutMax,
       path,
       liquidator.address,
       1661521170
     )
-  
+    const transaction = await tnx.wait();
+    console.log("GAS USED: ", transaction.gasUsed.toString());
+
     const wbnbFinalBalance = ethers.utils.formatEther(await wbnb.balanceOf(liquidator.address));
     const usdtFinalBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
 
@@ -169,7 +175,7 @@ describe("PancakeSwap", async () => {
 
     await wbnb.connect(liquidator).approve(pancakeRouter.address, amountInMax);
 
-    await pancakeRouter.connect(liquidator).swapETHForExactTokens(
+    const tnx = await pancakeRouter.connect(liquidator).swapETHForExactTokens(
       amountOut,
       path,
       liquidator.address,
@@ -178,7 +184,9 @@ describe("PancakeSwap", async () => {
         value: amountInMax
       }
     )
-  
+    const transaction = await tnx.wait();
+    console.log("GAS USED: ", transaction.gasUsed.toString());
+
     const bnbFinalBalance = ethers.utils.formatEther(await liquidator.getBalance());
     const usdtFinalBalance = ethers.utils.formatEther(await usdt.balanceOf(liquidator.address));
 
